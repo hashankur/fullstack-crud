@@ -7,7 +7,7 @@
 
       <ul class="grid gap-4 mt-8 sm:grid-cols-2 lg:grid-cols-4">
         <li v-for="product in products" :key="product.id">
-          <a href="#" class="block overflow-hidden group">
+          <div @click="editProduct({ ...product })" class="block overflow-hidden group">
             <img
               :src="product.image"
               alt=""
@@ -27,19 +27,40 @@
                 <span class="tracking-wider text-gray-900"> $ {{ product.price }} </span>
               </p>
             </div>
-          </a>
+          </div>
         </li>
       </ul>
     </div>
   </section>
+  <ProductManager @update:selected="selected = $event" :selected :selectedProduct />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import ProductManager from './ProductManager.vue'
 
-const products = ref(null)
+type Product = {
+  id: number
+  title: string
+  price: number
+  image: string
+}
 
-fetch('https://fakestoreapi.com/products')
+const selected = ref(false)
+let selectedProduct = {
+  id: 0,
+  title: '',
+  price: 0,
+  image: ''
+}
+const products = ref<Array<Product>>([])
+
+fetch(`${import.meta.env.VITE_BACKEND_URL}/products`)
   .then((response) => response.json())
-  .then((data) => (products.value = data))
+  .then((data) => (products.value = data.result))
+
+const editProduct = (product: Product) => {
+  selected.value = !selected.value
+  selectedProduct = product
+}
 </script>

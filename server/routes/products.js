@@ -24,7 +24,7 @@ async function getProducts(req, res) {
       // Include the document ID
       return { id: doc.id, ...doc.data() };
     });
-    return res.json({ data: result });
+    return res.json({ result });
   });
 }
 
