@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="$route.path !== '/sign-in' && $route.path !== '/sign-up'"
-    class="flex flex-col justify-between h-screen bg-white border-e"
-  >
+  <div class="flex flex-col justify-between h-screen bg-white border-e">
     <div class="px-4 py-6">
       <span
         class="grid w-32 h-10 text-xs text-gray-600 bg-gray-100 rounded-lg place-content-center"
@@ -51,47 +48,27 @@
 
             <ul class="px-4 mt-2 space-y-1">
               <li>
-                <a
-                  href="#"
+                <RouterLink
+                  to="/create-profile"
                   class="block px-4 py-2 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
                 >
                   Details
-                </a>
+                </RouterLink>
               </li>
 
               <li>
-                <a
-                  href="#"
-                  class="block px-4 py-2 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
+                <button
+                  @click="signOutUser"
+                  class="w-full rounded-lg px-4 py-2 text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-gray-100 hover:text-gray-700"
                 >
-                  Security
-                </a>
-              </li>
-
-              <li>
-                <form action="#">
-                  <button
-                    type="submit"
-                    class="w-full rounded-lg px-4 py-2 text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-gray-100 hover:text-gray-700"
-                  >
-                    Logout
-                  </button>
-                </form>
+                  Logout
+                </button>
               </li>
             </ul>
           </details>
         </li>
       </ul>
     </div>
-
-    <RouterLink to="/about">About</RouterLink>
-    <span v-if="isLoggedIn">
-      <button @click="signOutUser">Logout</button>
-    </span>
-    <span v-else>
-      <router-link to="/register"> Register </router-link> |
-      <router-link to="/sign-in"> Login </router-link>
-    </span>
 
     <div class="sticky inset-x-0 bottom-0 border-t border-gray-100">
       <a href="#" class="flex items-center gap-2 p-4 bg-white hover:bg-gray-50">
