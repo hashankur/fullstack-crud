@@ -85,8 +85,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { storage } from '../firebase'
+import {
+  deleteObject,
+  ref as storageRef,
+  uploadBytesResumable,
+  getDownloadURL
+} from 'firebase/storage'
 import FilePicker from '../components/FilePicker.vue'
-import { update } from 'firebase/database'
 
 const props = defineProps({
   selected: Boolean,
@@ -96,11 +102,17 @@ const props = defineProps({
 const emit = defineEmits(['update:selected', 'remove:selected', 'add:selected', 'edit:selected'])
 const image = ref('')
 
-const manageProduct = () => {
+const manageProduct = async () => {
   const product = {
     title: props.selectedProduct.title,
     price: props.selectedProduct.price,
     image: props.selectedProduct.image
+  }
+
+  // Update to new image if selected
+  if (image.value !== '') {
+    product.image = await imageToFirebase()
+    image.value = '' // Reset image
   }
 
   if (props.selectedProduct.id === 0) {
@@ -135,7 +147,17 @@ const manageProduct = () => {
 const deleteProduct = () => {
   fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${props.selectedProduct.id}`, {
     method: 'DELETE'
-  }).then((res) => {
+  }).then(() => {
+    const imageRef = storageRef(storage, `product_images/${props.selectedProduct.id}.jpg`)
+
+    deleteObject(imageRef)
+      .then(() => {
+        console.log('Image deleted from Firebase Storage')
+      })
+      .catch((error) => {
+        console.error('Error deleting image from Firebase Storage:', error)
+      })
+
     emit('update:selected', false)
     emit('remove:selected', props.selectedProduct.id)
   })
@@ -144,5 +166,25 @@ const deleteProduct = () => {
 // Get image data from FilePicker component
 const handlePreviewImage = (previewImage) => {
   image.value = previewImage
+}
+
+const imageToFirebase = async () => {
+  try {
+    // Convert base64 string to Blob
+    const response = await fetch(image.value)
+    const blob = await response.blob()
+    const filename = `${props.selectedProduct.id}.jpg`
+    const imageRef = storageRef(storage, `product_images/${filename}`)
+    const uploadTask = uploadBytesResumable(imageRef, blob)
+
+    // Wait for the upload to complete
+    await new Promise((resolve, reject) => {
+      uploadTask.on('state_changed', null, reject, resolve)
+    })
+
+    return await getDownloadURL(imageRef)
+  } catch (error) {
+    console.error('Error uploading image:', error)
+  }
 }
 </script>

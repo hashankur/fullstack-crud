@@ -5,7 +5,7 @@
       <img
         :src="previewImage ? previewImage : userDefaultImg"
         alt="Placeholder"
-        class="object-cover rounded-2xl size-40"
+        class="object-contain rounded-2xl size-40"
       />
     </div>
     <input type="file" @change="handleFileChange" accept="image/*" class="hidden" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import userDefaultImg from '../assets/user.png'
+import userDefaultImg from '../assets/defaultPicker.png'
 import { ref, watch } from 'vue'
 const previewImage = ref('')
 
