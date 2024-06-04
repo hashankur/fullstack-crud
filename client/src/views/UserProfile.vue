@@ -2,7 +2,7 @@
   <div class="grid h-screen max-w-screen-xl px-4 py-16 mx-auto place-items-center sm:px-6 lg:px-8">
     <div class="flex flex-col items-center justify-center w-1/2 grow">
       <div class="max-w-lg mx-auto mb-10 text-center">
-        <h1 class="text-2xl font-bold sm:text-3xl">Create Profile</h1>
+        <h1 class="text-2xl font-bold sm:text-3xl">User Profile</h1>
       </div>
 
       <FilePicker @update:previewImage="handlePreviewImage" />
@@ -38,49 +38,47 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import firebase from '../firebase'
-import { getAuth, updateProfile } from 'firebase/auth'
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytesResumable,
-  getDownloadURL
-} from 'firebase/storage'
+import { auth, storage } from '../firebase'
+import { updateProfile } from 'firebase/auth'
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import FilePicker from '../components/FilePicker.vue'
 
-const auth = getAuth(firebase)
-const storage = getStorage(firebase)
 const router = useRouter()
 
 const name = ref('')
 const image = ref('')
 
 const createProfile = async () => {
-  // Convert base64 string to Blob
-  const response = await fetch(image.value)
-  const blob = await response.blob()
+  try {
+    // Convert base64 string to Blob
+    const response = await fetch(image.value)
+    const blob = await response.blob()
 
-  const filename = `${auth.currentUser.uid}.jpg`
+    const filename = `${auth.currentUser.uid}.jpg`
+    console.log(filename)
 
-  // Create a storage reference
-  const imageRef = storageRef(storage, `user_images/${filename}`)
+    // Create a storage reference
+    const imageRef = storageRef(storage, `user_images/${filename}`)
 
-  // Upload the image to Firebase Storage
-  const uploadTask = uploadBytesResumable(imageRef, blob)
+    // Upload the image to Firebase Storage
+    const uploadTask = uploadBytesResumable(imageRef, blob)
 
-  // Wait for the upload to complete
-  await new Promise((resolve, reject) => {
-    uploadTask.on('state_changed', null, reject, resolve)
-  })
+    // Wait for the upload to complete
+    await new Promise((resolve, reject) => {
+      uploadTask.on('state_changed', null, reject, resolve)
+    })
 
-  // Get the download URL of the uploaded image
-  const downloadURL = await getDownloadURL(imageRef)
+    // Get the download URL of the uploaded image
+    const downloadURL = await getDownloadURL(imageRef)
 
-  // Update the user profile with the download URL
-  await updateProfile(auth.currentUser, {
-    displayName: name.value,
-    photoURL: downloadURL
-  })
+    // Update the user profile with the download URL
+    await updateProfile(auth.currentUser, {
+      displayName: name.value,
+      photoURL: downloadURL
+    })
+  } catch (error) {
+    console.error('Error uploading image:', error)
+  }
 
   router.push('/')
 }

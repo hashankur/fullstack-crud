@@ -14,7 +14,6 @@ const router = useRouter()
 const authListener = onAuthStateChanged(auth, (user) => {
   if (!user) {
     // not logged in
-    alert('You must be logged in to view this. redirecting to the sign-in page')
     router.push('/sign-in')
   }
 })

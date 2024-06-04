@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getStorage } from 'firebase/storage'
 
 const envvar = import.meta.env
 
@@ -15,9 +17,11 @@ const firebaseConfig = {
   measurementId: envvar.VITE_MESSAGING_SENDER_ID
 }
 
-console.log(firebaseConfig)
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-export default app
+const auth = getAuth(app)
+
+const storage = getStorage(app)
+
+export { auth, storage, app }
