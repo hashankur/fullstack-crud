@@ -13,12 +13,15 @@ const router = createRouter({
           path: '/',
           name: 'home',
           component: HomeView
+        },
+        {
+          path: '/new-product',
+          component: () => import('../views/NewProduct.vue')
         }
       ]
     },
     {
       path: '/sign-up',
-      name: 'sign-up',
       component: () => import('../views/SignUp.vue')
     },
     {
@@ -26,20 +29,15 @@ const router = createRouter({
       component: () => import('../views/SignIn.vue')
     },
     {
-      path: '/create-profile',
-      component: () => import('../views/CreateProfile.vue')
+      path: '/user-profile',
+      component: () => import('../views/UserProfile.vue')
     },
     {
       path: '/:catchAll(.*)*',
-      component: () => import('../views/NotFound.vue')
-    },
-    {
-      path: '/about',
-      name: 'about',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      component: () => import('../views/NotFound.vue')
     }
   ]
 })

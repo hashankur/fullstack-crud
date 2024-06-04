@@ -14,7 +14,7 @@
           class="relative overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-lg"
         >
           <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-            <div class="grid items-center justify-center gap-10 mt-8 md:grid-cols-2">
+            <div class="grid items-center justify-center gap-10 my-8 md:grid-cols-2">
               <FilePicker
                 @update:previewImage="handlePreviewImage"
                 :image="selectedProduct.image"
@@ -57,7 +57,8 @@
               type="button"
               class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-400 sm:ml-3 sm:w-auto"
             >
-              Add
+              <span v-if="props.selectedProduct.id == 0">Add</span>
+              <span v-else>Edit</span>
             </button>
             <button
               @click="$emit('update:selected', false)"
@@ -68,6 +69,7 @@
             </button>
             <span class="grow"></span>
             <button
+              v-if="props.selectedProduct.id != 0"
               @click="deleteProduct"
               type="button"
               class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-500 sm:ml-3 sm:mt-0 sm:w-auto"
@@ -83,37 +85,60 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import FilePicker from '../components/FilePicker.vue'
+import { update } from 'firebase/database'
 
 const props = defineProps({
   selected: Boolean,
   selectedProduct: Object
 })
 
-const router = useRouter()
+const emit = defineEmits(['update:selected', 'remove:selected', 'add:selected', 'edit:selected'])
 const image = ref('')
 
 const manageProduct = () => {
-  console.log(props.selectedProduct)
-  fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${props.selectedProduct.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      title: props.selectedProduct.title,
-      price: props.selectedProduct.price,
-      image: props.selectedProduct.image
+  const product = {
+    title: props.selectedProduct.title,
+    price: props.selectedProduct.price,
+    image: props.selectedProduct.image
+  }
+
+  if (props.selectedProduct.id === 0) {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(product)
+    }).then((res) => {
+      res.json().then((data) => {
+        emit('update:selected', false)
+        emit('add:selected', { ...product, id: data.id })
+      })
     })
-  })
+  } else {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${props.selectedProduct.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(product)
+    }).then((res) => {
+      res.json().then((data) => {
+        emit('update:selected', false)
+        emit('edit:selected', { ...product, id: data.id })
+      })
+    })
+  }
 }
 
 const deleteProduct = () => {
   fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${props.selectedProduct.id}`, {
     method: 'DELETE'
+  }).then((res) => {
+    emit('update:selected', false)
+    emit('remove:selected', props.selectedProduct.id)
   })
-  router.go()
 }
 
 // Get image data from FilePicker component

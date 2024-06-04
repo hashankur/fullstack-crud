@@ -3,6 +3,12 @@
     <div class="max-w-screen-xl px-4 py-8 mx-auto sm:px-6 sm:py-12 lg:px-8">
       <header>
         <h2 class="mt-10 text-xl font-bold text-gray-900 sm:text-3xl">Product Collection</h2>
+        <button
+          @click="addProduct"
+          class="rounded-lg px-4 py-2 mt-5 text-sm font-medium text-gray-500 [text-align:_inherit] bg-gray-100 hover:text-gray-700"
+        >
+          Add product
+        </button>
       </header>
 
       <ul class="grid gap-4 mt-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -32,7 +38,17 @@
       </ul>
     </div>
   </section>
-  <ProductManager @update:selected="selected = $event" :selected :selectedProduct />
+  <ProductManager
+    @update:selected="selected = $event"
+    @remove:selected="products = products.filter((product) => product.id !== selectedProduct.id)"
+    @add:selected="($event) => $event.id && products.push($event)"
+    @edit:selected="
+      ($event) =>
+        (products = products.map((product) => (product.id === $event.id ? $event : product)))
+    "
+    :selected
+    :selectedProduct
+  />
 </template>
 
 <script setup lang="ts">
@@ -58,6 +74,16 @@ const products = ref<Array<Product>>([])
 fetch(`${import.meta.env.VITE_BACKEND_URL}/products`)
   .then((response) => response.json())
   .then((data) => (products.value = data.result))
+
+const addProduct = () => {
+  selected.value = !selected.value
+  selectedProduct = {
+    id: 0,
+    title: '',
+    price: 0,
+    image: ''
+  }
+}
 
 const editProduct = (product: Product) => {
   selected.value = !selected.value
