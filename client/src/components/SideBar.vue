@@ -1,10 +1,48 @@
 <template>
-  <div class="flex flex-col justify-between h-screen bg-white border-e">
+  <button
+    @click="toggle = !toggle"
+    class="fixed top-0 z-50 text-gray-800 translate-x-8 translate-y-8"
+  >
+    <svg
+      data-slot="icon"
+      fill="none"
+      stroke-width="1.5"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      class="w-6 h-6"
+      :class="{ hidden: !toggle }"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+      ></path>
+    </svg>
+    <svg
+      data-slot="icon"
+      fill="none"
+      stroke-width="1.5"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      class="w-6 h-6"
+      :class="{ hidden: toggle }"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+  <div
+    class="sticky top-0 flex flex-col justify-between h-screen bg-white border-e"
+    :class="{ hidden: toggle }"
+  >
     <div class="px-4 py-6">
       <span
         class="grid w-32 h-10 text-xs text-gray-600 bg-gray-100 rounded-lg place-content-center"
       >
-        Logo
+        Store
       </span>
 
       <ul class="mt-6 space-y-1">
@@ -12,15 +50,6 @@
           <RouterLink to="/" class="block px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
             Home
           </RouterLink>
-        </li>
-
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-          >
-            Invoices
-          </a>
         </li>
 
         <li>
@@ -49,10 +78,10 @@
             <ul class="px-4 mt-2 space-y-1">
               <li>
                 <RouterLink
-                  to="/create-profile"
+                  to="/user-profile"
                   class="block px-4 py-2 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
                 >
-                  Details
+                  Edit Profile
                 </RouterLink>
               </li>
 
@@ -89,17 +118,18 @@
     </div>
   </div>
 </template>
+
 <script setup>
-import firebase from '../firebase'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { ref } from 'vue' // used for conditional rendering
 import { useRouter } from 'vue-router'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../firebase'
 import userDefaultImg from '../assets/user.png'
 
-const router = useRouter(firebase)
-const auth = getAuth(firebase)
+const router = useRouter()
 const isLoggedIn = ref(true)
 let userData = ref('')
+const toggle = ref(false)
 
 // runs after firebase is initialized
 onAuthStateChanged(auth, (user) => {

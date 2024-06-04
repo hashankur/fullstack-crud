@@ -1,7 +1,7 @@
 <template>
   <!-- Wrapped in label to create group clickable area -->
   <label>
-    <div class="">
+    <div class="flex justify-center">
       <img
         :src="previewImage ? previewImage : userDefaultImg"
         alt="Placeholder"
@@ -14,8 +14,19 @@
 
 <script setup>
 import userDefaultImg from '../assets/user.png'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 const previewImage = ref('')
+
+const props = defineProps({
+  image: String
+})
+
+watch(
+  () => props.image,
+  (newImage) => {
+    previewImage.value = newImage
+  }
+)
 
 const emit = defineEmits(['update:previewImage'])
 

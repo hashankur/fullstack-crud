@@ -3,14 +3,13 @@
 </template>
 
 <script setup>
-import firebase from '../firebase'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../firebase'
 import { useRouter } from 'vue-router'
 import { onBeforeUnmount } from 'vue'
 import ProductsCollection from '../components/ProductsCollection.vue'
 
 const router = useRouter()
-const auth = getAuth(firebase)
 
 const authListener = onAuthStateChanged(auth, (user) => {
   if (!user) {

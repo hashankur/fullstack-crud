@@ -2,7 +2,7 @@
   <section>
     <div class="max-w-screen-xl px-4 py-8 mx-auto sm:px-6 sm:py-12 lg:px-8">
       <header>
-        <h2 class="text-xl font-bold text-gray-900 sm:text-3xl">Product Collection</h2>
+        <h2 class="mt-10 text-xl font-bold text-gray-900 sm:text-3xl">Product Collection</h2>
       </header>
 
       <ul class="grid gap-4 mt-8 sm:grid-cols-2 lg:grid-cols-4">

@@ -68,15 +68,14 @@
 
 <script setup type="ts">
 import { ref } from 'vue'
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import firebase from '../firebase'
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase'
 import { useRouter } from 'vue-router' // import router
 
 const email = ref('')
 const password = ref('')
 const errMsg = ref() // ERROR MESSAGE
 const router = useRouter() // get a reference to our vue router
-const auth = getAuth(firebase);
 
 const register = () => {
     signInWithEmailAndPassword(auth,email.value, password.value) // need .value because ref()

@@ -14,7 +14,7 @@
           class="relative overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-lg"
         >
           <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-            <div class="grid items-center justify-center grid-cols-2 gap-10 mt-8">
+            <div class="grid items-center justify-center gap-10 mt-8 md:grid-cols-2">
               <FilePicker
                 @update:previewImage="handlePreviewImage"
                 :image="selectedProduct.image"
@@ -70,7 +70,7 @@
             <button
               @click="deleteProduct"
               type="button"
-              class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+              class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-500 sm:ml-3 sm:mt-0 sm:w-auto"
             >
               Delete
             </button>

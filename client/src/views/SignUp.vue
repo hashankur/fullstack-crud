@@ -82,8 +82,8 @@
 
 <script setup type="ts">
 import { ref } from 'vue'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebase from '../firebase'
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase'
 import { useRouter } from 'vue-router' // import router
 
 const email = ref('')
@@ -91,7 +91,6 @@ const password = ref('')
 const passwordConfirmation = ref('')
 const errMsg = ref() // ERROR MESSAGE
 const router = useRouter() // get a reference to our vue router
-const auth = getAuth(firebase);
 
 const register = () => {
   if (password.value !== passwordConfirmation.value) {
@@ -102,7 +101,7 @@ const register = () => {
     createUserWithEmailAndPassword(auth, email.value, password.value) // need .value because ref()
     .then((data) => {
       console.log('Successfully registered!')
-      router.push('/create-profile')
+      router.push('/user-profile')
     })
     .catch((error) => {
         switch (error.code) {
