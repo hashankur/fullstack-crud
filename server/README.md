@@ -1,7 +1,14 @@
 # Express Backend
 
+Install dependencies:
+
+```sh
+cd server
+npm install
+```
+
 To run:
 
-```bash
+```sh
 npm run start
 ```
